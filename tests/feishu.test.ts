@@ -10,7 +10,7 @@ import { test } from 'node:test'
 
 import { chatIdOf, toTrigger } from '../src/feishu.ts'
 
-const CHAT = 'oc_a7513cdb371d5f53aced164353208332'
+const CHAT = 'oc_demo_chat_0000000000000000'
 
 /** 一条张存发的普通文本消息（形状照抄真实返回）。 */
 function userMessage(overrides: Record<string, unknown> = {}): Parameters<typeof toTrigger>[0] {
@@ -21,7 +21,7 @@ function userMessage(overrides: Record<string, unknown> = {}): Parameters<typeof
     create_time: '2026-10-29 22:58',
     deleted: false,
     msg_type: 'text',
-    sender: { id: 'ou_cf7045f182a08d5d8fb2ce2dc1a1c4d5', id_type: 'open_id', sender_type: 'user', name: '张存' },
+    sender: { id: 'ou_demo_user_0000000000000000', id_type: 'open_id', sender_type: 'user', name: '张存' },
     ...overrides,
   }
 }
@@ -32,7 +32,7 @@ test('用户消息映射成 Trigger：id 带源前缀、threadKey 到群', () =>
   assert.equal(trigger?.source, 'feishu')
   assert.equal(trigger?.threadKey, `feishu:chat:${CHAT}`)
   assert.equal(trigger?.kind, 'message')
-  assert.equal(trigger?.actor, 'ou_cf7045f182a08d5d8fb2ce2dc1a1c4d5')
+  assert.equal(trigger?.actor, 'ou_demo_user_0000000000000000')
   assert.equal(trigger?.payload, '/task 给 whyEmpty 加一个边界')
 })
 
