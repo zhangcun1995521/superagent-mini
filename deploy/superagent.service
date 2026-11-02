@@ -1,0 +1,52 @@
+[Unit]
+Description=superagent-mini (resident super-agent on DSH)
+Documentation=file:/opt/superagent/docs/DEPLOY.md
+# 只要出站网络（飞书 API + 模型 API），所以要等网络就绪。
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=agent
+Group=agent
+WorkingDirectory=/opt/superagent
+
+# 配置全走这个文件，不进代码。权限 600，属主 agent。
+EnvironmentFile=/etc/superagent/env
+
+# 时间基准：代码里已按 +08:00 解析飞书时间，这里只是让日志读起来顺。
+Environment=TZ=Asia/Shanghai
+
+ExecStart=/usr/bin/node /opt/superagent/src/run.ts
+
+# 崩了就重起。10 秒间隔防止"启动即崩"打满日志。
+Restart=always
+RestartSec=10
+# 5 分钟内崩超过 10 次就不重启了——这是"配置错了"，不是"抖了一下"，
+# 让它停下来等人看，比无限重试掩盖问题强。
+StartLimitBurst=10
+StartLimitIntervalSec=300
+
+# 状态目录必须可写：state/ 是 append-only 的事实来源。
+StateDirectory=superagent
+ReadWritePaths=/var/lib/superagent
+
+# 收尾给 30 秒：让在飞的 Worker 尽量落地，别硬杀。
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# 最小权限：不允许提权，私有 /tmp，只读根。
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+RestrictSUIDSGID=true
+
+# 日志走 journald。
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=superagent
+
+[Install]
+WantedBy=multi-user.target

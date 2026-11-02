@@ -1,0 +1,23 @@
+{
+  "name": "superagent-mini",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A resident super-agent on DSH: triggers in, threads routed, workers isolated, evidence kept.",
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/run.ts",
+    "demo": "node src/demo.ts",
+    "bench": "node src/harness.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh": "0.1.7-rc.2"
+  }
+}
